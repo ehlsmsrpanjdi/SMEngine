@@ -9,9 +9,20 @@
      }
 
      MSG msg;
-     while (GetMessage(&msg, nullptr, 0, 0)) {
-         TranslateMessage(&msg);
-         DispatchMessage(&msg);
+     while (true) {
+         // PeekMessage로 메시지 큐를 확인
+         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+             // 메시지가 있으면 처리
+             if (msg.message == WM_QUIT) break;
+
+             TranslateMessage(&msg);
+             DispatchMessage(&msg);
+         }
+         else {
+             // 메시지가 없을 때 수행할 작업
+             // 게임 로직이나 애니메이션 업데이트 등
+             //GameUpdate();
+         }
      }
  }
 
