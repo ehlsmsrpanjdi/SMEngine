@@ -1,7 +1,21 @@
 #include "DefineHeader.h"
 #include <UWindow/UWindow.h>
 
-ATOM UWindow::MyRegisterClass(HINSTANCE hInstance)
+ void UWindow::WindowInit(HINSTANCE hInstacne)
+ {
+     MyRegisterClass(hInstacne);
+     if (!InitInstance(hInstacne)) {
+         return;
+     }
+
+     MSG msg;
+     while (GetMessage(&msg, nullptr, 0, 0)) {
+         TranslateMessage(&msg);
+         DispatchMessage(&msg);
+     }
+ }
+
+ ATOM UWindow::MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
 
@@ -12,12 +26,12 @@ ATOM UWindow::MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(107));
+    wcex.hIcon = LoadIcon(hInstance, IDC_ARROW);
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcex.lpszMenuName = nullptr;
-    wcex.lpszClassName = L"asdf";
-    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(108));
+    wcex.lpszMenuName = WindowName;
+    wcex.lpszClassName = EngineName;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, IDC_ARROW);
 
     return RegisterClassExW(&wcex);
 }
@@ -32,11 +46,10 @@ ATOM UWindow::MyRegisterClass(HINSTANCE hInstance)
 //        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
 //        주 프로그램 창을 만든 다음 표시합니다.
 //
-BOOL UWindow::InitInstance(HINSTANCE hInstance, int nCmdShow)
+BOOL UWindow::InitInstance(HINSTANCE hInstance)
 {
-    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-    HWND hWnd = CreateWindowW(L"asdf", L"a", WS_OVERLAPPEDWINDOW,
+    HWND hWnd = CreateWindowW(EngineName, WindowName, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
     if (!hWnd)
@@ -44,8 +57,10 @@ BOOL UWindow::InitInstance(HINSTANCE hInstance, int nCmdShow)
         return FALSE;
     }
 
-    ShowWindow(hWnd, nCmdShow);
+    ShowWindow(hWnd, SW_SHOW);
     UpdateWindow(hWnd);
+
+
 
     return TRUE;
 }
